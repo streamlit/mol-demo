@@ -17,16 +17,13 @@ st.subheader("🧪 Molecule editor")
 chembl_id = st.text_input("ChEMBL ID:", st.session_state.chembl_id)
 st.session_state.smiles = utils.id_to_molecule(chembl_id)
 
-col1, col2, col3 = st.columns(3)
-with col1:
-    if st.button('☕ Caffeine'):
-        st.session_state.smiles, st.session_state.chembl_id = utils.name_to_molecule('Caffeine')
-with col2:
-    if st.button('🥱 Melatonin'):
-        st.session_state.smiles, st.session_state.chembl_id = utils.name_to_molecule('Melatonin')
-with col3:
-    if st.button('🚬 Nicotine'):
-        st.session_state.smiles, st.session_state.chembl_id = utils.name_to_molecule('Nicotine')
+famous_molecules = [('☕', 'Caffeine'), ('🥱', 'Melatonin'), ('🚬', 'Nicotine')]
+for molecule, column in zip(famous_molecules, st.columns(len(famous_molecules))):
+    with column:
+        emoji, name = molecule
+        if st.button(f'{emoji} {name}'):
+            st.session_state.smiles, st.session_state.chembl_id = utils.name_to_molecule(name)
+
 editor_column, results_column = st.columns(2)
 with editor_column:
     smiles = st_ketcher(st.session_state.smiles)
