@@ -33,7 +33,8 @@ similar_smiles = []
 with editor_column:
     smiles = st_ketcher(st.session_state.molfile)
     similarity_threshold = st.slider("Similarity threshold:", min_value=60, max_value=100)
-    st.markdown(f"```{smiles}```")
+    with st.expander("Raw data"):
+        st.markdown(f"```{smiles}```")
     with results_column:
         similar_molecules = utils.find_similar_molecules(smiles, similarity_threshold)
         if not similar_molecules:
@@ -45,6 +46,7 @@ with editor_column:
                         unsafe_allow_html=True)
 
 if similar_smiles:
+    st.subheader("Target prediction based on [ChEMBL multitask model](https://github.com/chembl/chembl_multitask_model)")
     if st.button("🔮 Predict targets"):
         preds = target_predictions.predict_all(similar_smiles)
         table = utils.render_target_predictions_table(preds)
