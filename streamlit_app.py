@@ -5,8 +5,8 @@ import utils
 
 DEFAULT_COMPOUND = "CHEMBL141739"
 
-if "smiles" not in st.session_state:
-    st.session_state.smiles = None
+if "molfile" not in st.session_state:
+    st.session_state.molfile = None
 
 if "chembl_id" not in st.session_state:
     st.session_state.chembl_id = DEFAULT_COMPOUND
@@ -15,18 +15,18 @@ st.set_page_config(layout="wide")
 st.subheader("🧪 Molecule editor")
 
 chembl_id = st.text_input("ChEMBL ID:", st.session_state.chembl_id)
-st.session_state.smiles = utils.id_to_molecule(chembl_id)
+st.session_state.molfile = utils.id_to_molecule(chembl_id)
 
 famous_molecules = [('☕', 'Caffeine'), ('🥱', 'Melatonin'), ('🚬', 'Nicotine')]
 for molecule, column in zip(famous_molecules, st.columns(len(famous_molecules))):
     with column:
         emoji, name = molecule
         if st.button(f'{emoji} {name}'):
-            st.session_state.smiles, st.session_state.chembl_id = utils.name_to_molecule(name)
+            st.session_state.molfile, st.session_state.chembl_id = utils.name_to_molecule(name)
 
 editor_column, results_column = st.columns(2)
 with editor_column:
-    smiles = st_ketcher(st.session_state.smiles)
+    smiles = st_ketcher(st.session_state.molfile)
     similarity_threshold = st.slider("Similarity threshold:", min_value=60, max_value=100)
     st.markdown(f"```{smiles}```")
     with results_column:
