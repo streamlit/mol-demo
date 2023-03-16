@@ -1,6 +1,6 @@
 import pandas as pd
 import streamlit as st
-from typing import Optional
+from typing import Optional, Tuple
 from streamlit_ketcher import st_ketcher
 from chembl_webresource_client.new_client import new_client as ch
 
@@ -9,9 +9,11 @@ DEFAULT_COMPOUND = "CHEMBL141739"
 EBI_URL = "https://www.ebi.ac.uk/chembl/"
 
 
-def name_to_smiles(name: str) -> str:
-    ret = ch.molecule.filter(molecule_synonyms__molecule_synonym__iexact=name).only('molecule_structures')
-    return ret[0]["molecule_structures"]["molfile"]
+def name_to_smiles(name: str) -> Tuple[str, str]:
+    columns = ['molecule_chembl_id', 'molecule_structures']
+    ret = ch.molecule.filter(molecule_synonyms__molecule_synonym__iexact=name).only(columns)
+    best_match = ret[0]
+    return best_match["molecule_structures"]["molfile"], best_match["molecule_chembl_id"]
 
 
 def render_similarity_table(smiles: str, threshold: int) -> Optional[str]:
@@ -44,22 +46,25 @@ def render_similarity_table(smiles: str, threshold: int) -> Optional[str]:
 if "smiles" not in st.session_state:
     st.session_state.smiles = None
 
+if "chembl_id" not in st.session_state:
+    st.session_state.chembl_id = DEFAULT_COMPOUND
+
 st.set_page_config(layout="wide")
 st.subheader("🧪 Molecule editor")
 
-chembl_id = st.text_input("ChEMBL ID:", DEFAULT_COMPOUND)
+chembl_id = st.text_input("ChEMBL ID:", st.session_state.chembl_id)
 st.session_state.smiles = ch.molecule.filter(chembl_id=chembl_id).only('molecule_structures')[0]["molecule_structures"]["molfile"]
 
 col1, col2, col3 = st.columns(3)
 with col1:
     if st.button('☕ Caffeine'):
-        st.session_state.smiles = name_to_smiles('Caffeine')
+        st.session_state.smiles, st.session_state.chembl_id = name_to_smiles('Caffeine')
 with col2:
     if st.button('🥱 Melatonin'):
-        st.session_state.smiles = name_to_smiles('Melatonin')
+        st.session_state.smiles, st.session_state.chembl_id = name_to_smiles('Melatonin')
 with col3:
     if st.button('🚬 Nicotine'):
-        st.session_state.smiles = name_to_smiles('Nicotine')
+        st.session_state.smiles, st.session_state.chembl_id = name_to_smiles('Nicotine')
 editor_column, results_column = st.columns(2)
 with editor_column:
     smiles = st_ketcher(st.session_state.smiles)
