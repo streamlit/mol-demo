@@ -74,7 +74,7 @@ def find_similar_molecules(smiles: str, threshold: int):
 
 
 def render_similarity_table(similar_molecules) -> Optional[str]:
-    records = [render_row(row) for row in similar_molecules]
+    records = [render_row(row) for row in similar_molecules if row["molecule_structures"]]
     df = pd.DataFrame.from_records(records)
     styled = style_table(df)
     return styled.to_html(render_links=True)
@@ -90,4 +90,4 @@ def render_target_predictions_table(predictions) -> Optional[str]:
 
 
 def get_similar_smiles(similar_molecules):
-    return [mol["molecule_structures"]["canonical_smiles"] for mol in similar_molecules]
+    return [mol["molecule_structures"]["canonical_smiles"] for mol in similar_molecules if mol["molecule_structures"]]

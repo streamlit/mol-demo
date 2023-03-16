@@ -18,7 +18,10 @@ st.subheader("🧪 Molecule editor")
 chembl_id = st.text_input("ChEMBL ID:", st.session_state.chembl_id)
 st.session_state.molfile = utils.id_to_molecule(chembl_id)
 
-famous_molecules = [('☕', 'Caffeine'), ('🥱', 'Melatonin'), ('🚬', 'Nicotine')]
+famous_molecules = [
+    ('☕', 'Caffeine'), ('🥱', 'Melatonin'), ('🚬', 'Nicotine'), ('🌨️', 'Cocaine'), ('💊', 'Aspirin'),
+    ('🍄', 'Psilocybine'), ('💎', 'Lysergide')
+]
 for molecule, column in zip(famous_molecules, st.columns(len(famous_molecules))):
     with column:
         emoji, name = molecule
@@ -33,11 +36,11 @@ with editor_column:
     st.markdown(f"```{smiles}```")
     with results_column:
         similar_molecules = utils.find_similar_molecules(smiles, similarity_threshold)
-        table = utils.render_similarity_table(similar_molecules)
-        similar_smiles = utils.get_similar_smiles(similar_molecules)
-        if not table:
+        if not similar_molecules:
             st.warning("No results found")
-        if table:
+        else:
+            table = utils.render_similarity_table(similar_molecules)
+            similar_smiles = utils.get_similar_smiles(similar_molecules)
             st.markdown(f'<div id="" style="overflow:scroll; height:600px; padding-left: 80px;">{table}</div>',
                         unsafe_allow_html=True)
 
