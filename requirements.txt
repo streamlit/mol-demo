@@ -2,6 +2,6 @@ rdkit==2022.9.5
 onnxruntime==1.14.1
 chembl-webresource-client==0.10.8
 matplotlib==3.7.1
-streamlit==1.20.0
+streamlit==1.30.0
 pandas==1.5.3
 ./streamlit_ketcher-0.0.1-py2.py3-none-any.whl
